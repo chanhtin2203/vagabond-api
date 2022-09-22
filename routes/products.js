@@ -1,11 +1,13 @@
 const middlewareController = require("../controllers/middlewareController");
 const productController = require("../controllers/productController");
+const upload = require("../utils/multer");
 const router = require("express").Router();
 
 // Create
 router.post(
   "/",
   middlewareController.verifyTokenAndAuthAdmin,
+  upload.single("image"),
   productController.createNewProduct
 );
 
@@ -13,6 +15,7 @@ router.post(
 router.put(
   "/edit/:id",
   middlewareController.verifyTokenAndAuthAdmin,
+  upload.single("image"),
   productController.updateProduct
 );
 

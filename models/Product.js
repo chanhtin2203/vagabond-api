@@ -15,6 +15,9 @@ const productSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    cloudinary_id: {
+      type: String,
+    },
     categories: {
       type: Array,
     },

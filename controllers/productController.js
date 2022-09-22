@@ -1,12 +1,22 @@
 const Product = require("../models/Product");
+const cloudinary = require("../utils/cloudinary");
 
 const productController = {
   // Create new product
   createNewProduct: async (req, res) => {
-    const newProduct = new Product(req.body);
     try {
-      const savedProduct = await newProduct.save();
-      return res.status(200).json(savedProduct);
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "vagabond-img",
+        use_filename: true,
+      });
+
+      let products = new Product({
+        ...req.body,
+        image: result.secure_url,
+        cloudinary_id: result.public_id,
+      });
+      const saveProduct = await products.save();
+      return res.status(200).json(saveProduct);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -14,14 +24,26 @@ const productController = {
   // Update Product
   updateProduct: async (req, res) => {
     try {
-      const updatedProduct = await Product.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      );
-      return res.status(200).json(updatedProduct);
+      let products = await Product.findById(req.params.id);
+
+      await cloudinary.uploader.destroy(products.cloudinary_id);
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "vagabond-img",
+        use_filename: true,
+      });
+
+      const data = {
+        ...req.body,
+        image: result.secure_url || products.image,
+        cloudinary_id: result.public_id || products.cloudinary_id,
+      };
+
+      products = await Product.findByIdAndUpdate(req.params.id, data, {
+        new: true,
+      });
+
+      return res.status(200).json(products);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -29,8 +51,10 @@ const productController = {
   // Delete
   deleteProduct: async (req, res) => {
     try {
-      await Product.findByIdAndRemove(req.params.id);
-      return res.status(200).json("Product has been deleted");
+      let product = await Product.findById(req.params.id);
+      await cloudinary.uploader.destroy(product.cloudinary_id);
+      await product.remove();
+      return res.status(200).json(product);
     } catch (error) {
       return res.status(500).json(error);
     }
