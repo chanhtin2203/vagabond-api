@@ -5,7 +5,7 @@ const productController = {
   // Create new product
   createNewProduct: async (req, res) => {
     try {
-      const result = await cloudinary.uploader.upload(req.file.path, {
+      const result = await cloudinary.uploader.upload(req.body.image, {
         folder: "vagabond-img",
         use_filename: true,
       });
@@ -28,7 +28,7 @@ const productController = {
 
       await cloudinary.uploader.destroy(products.cloudinary_id);
 
-      const result = await cloudinary.uploader.upload(req.file.path, {
+      const result = await cloudinary.uploader.upload(req.body.image, {
         folder: "vagabond-img",
         use_filename: true,
       });
