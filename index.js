@@ -8,6 +8,7 @@ const userRoute = require("./routes/user");
 const productRoute = require("./routes/products");
 const cartRoute = require("./routes/cart");
 const orderRoute = require("./routes/order");
+const stripeRoute = require("./routes/stripe");
 
 const app = express();
 dotenv.config();
@@ -26,6 +27,7 @@ app.use("/v1/user", userRoute);
 app.use("/v1/products", productRoute);
 app.use("/v1/carts", cartRoute);
 app.use("/v1/orders", orderRoute);
+app.use("/v1/checkout", stripeRoute);
 
 app.listen(8000, () => {
   console.log("server is running");
