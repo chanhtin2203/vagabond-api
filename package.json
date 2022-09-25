@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "echo 'Building...(not actually doing somthing, but usually I would'",
     "start": "nodemon index.js"
   },
   "keywords": [],
