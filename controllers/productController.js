@@ -97,9 +97,9 @@ const productController = {
     const qSearch = req.query.search;
 
     try {
-      const product = await Product.aggregate().search({
-        text: {
-          query: qSearch,
+      const product = await Product.find({
+        title: {
+          $eq: qSearch,
         },
       });
       return res.status(200).json(product);
