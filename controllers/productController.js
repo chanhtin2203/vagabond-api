@@ -70,13 +70,13 @@ const productController = {
   },
   // Get all Product
   getAllProduct: async (req, res) => {
-    const qNew = req.query.new;
+    const qSize = req.query.size;
     const qCategory = req.query.category;
     try {
       let products;
 
-      if (qNew) {
-        products = await Product.find().sort({ createdAt: -1 }).limit(1);
+      if (qSize) {
+        products = await Product.find().limit(qSize);
       } else if (qCategory) {
         products = await Product.find({
           categories: {
@@ -88,6 +88,21 @@ const productController = {
       }
 
       return res.status(200).json(products);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  // Search products
+  searchProducts: async (req, res) => {
+    const qSearch = req.query.search;
+
+    try {
+      const product = await Product.find({
+        title: {
+          $in: [qSearch],
+        },
+      });
+      return res.status(200).json(product);
     } catch (error) {
       return res.status(500).json(error);
     }
