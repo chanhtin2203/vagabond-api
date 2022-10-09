@@ -18,8 +18,11 @@ const productSchema = new mongoose.Schema(
     cloudinary_id: {
       type: String,
     },
-    categories: {
-      type: Array,
+    category: {
+      type: String,
+    },
+    subCategory: {
+      type: String,
     },
     size: {
       type: Array,
@@ -38,5 +41,7 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+productSchema.index({ title: "text" });
 
 module.exports = mongoose.model("Product", productSchema);

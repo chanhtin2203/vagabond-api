@@ -32,7 +32,6 @@ router.get("/find/:id", productController.getProduct);
 // get all product
 router.get("/", productController.getAllProduct);
 
-// search products
-router.get("/", productController.searchProducts);
+router.get("/search", productController.filterProducts);
 
 module.exports = router;
