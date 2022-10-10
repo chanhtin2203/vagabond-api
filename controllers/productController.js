@@ -1,6 +1,13 @@
 const Product = require("../models/Product");
 const cloudinary = require("../utils/cloudinary");
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 const productController = {
   // Create new product
   createNewProduct: async (req, res) => {
@@ -82,12 +89,6 @@ const productController = {
           $text: { $search: `\"${qSearch}\"` },
         });
       } else if (qRandom) {
-        function shuffleArray(array) {
-          for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-          }
-        }
         products = await Product.find();
         shuffleArray(products);
       } else if (qCategory && qSize) {
@@ -111,174 +112,134 @@ const productController = {
     }
   },
   filterProducts: async (req, res) => {
-    const filter = req.query.filter;
+    const qLte = req.query.lte;
+    const qGte = req.query.gte;
+    const qSize = req.query.size;
     const qCategory = req.query.category;
-    function checkFilter(type) {
-      return type.includes(filter);
-    }
+    const qSort = req.query.sort;
+    const qValue = req.query.value;
+
     try {
       let products;
+      // no category
+      if (qLte && qGte) {
+        products = await Product.find({
+          price: { $lte: qLte, $gte: qGte },
+        });
+      }
 
-      if (filter) {
-        switch (true) {
-          case checkFilter("under100000"):
-            products = await Product.find({
-              price: { $lte: 100000 },
-            });
-            break;
-          case checkFilter("range:100000_250000"):
-            products = await Product.find({
-              price: { $gte: 100000, $lte: 250000 },
-            });
-            break;
-          case checkFilter("range:250000_500000"):
-            products = await Product.find({
-              price: { $gte: 250000, $lte: 500000 },
-            });
-            break;
-          case checkFilter("range:500000_800000"):
-            products = await Product.find({
-              price: { $gte: 500000, $lte: 800000 },
-            });
-            break;
-          case checkFilter("on800000"):
-            products = await Product.find({
-              price: { $gte: 800000 },
-            });
-            break;
-          case checkFilter("under100000,range:100000_250000"):
-            products = await Product.find({
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-              ],
-            });
-            break;
-          case checkFilter(
-            "under100000,range:100000_250000,range:250000_500000"
-          ):
-            products = await Product.find({
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-                { price: { $gte: 250000, $lte: 500000 } },
-              ],
-            });
-            break;
-          case checkFilter(
-            "under100000,range:100000_250000,range:250000_500000,range:500000_800000"
-          ):
-            products = await Product.find({
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-                { price: { $gte: 250000, $lte: 500000 } },
-                { price: { $gte: 500000, $lte: 800000 } },
-              ],
-            });
-            break;
-          case checkFilter(
-            "under100000,range:100000_250000,range:250000_500000,range:500000_800000,on800000"
-          ):
-            products = await Product.find({
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-                { price: { $gte: 250000, $lte: 500000 } },
-                { price: { $gte: 500000, $lte: 800000 } },
-                { price: { $gte: 800000 } },
-              ],
-            });
-            break;
-          default:
-            break;
+      if (qSize) {
+        products = await Product.find({
+          size: { $in: qSize },
+        });
+      }
+
+      if (qSort) {
+        products = await Product.find().sort({
+          [qSort]: qValue,
+        });
+        if (qSort === "hot-product") {
+          products = await Product.find();
+          shuffleArray(products);
         }
       }
 
-      if (filter && qCategory) {
-        switch (true) {
-          case checkFilter("under100000"):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              price: { $lte: 100000 },
-            });
-            break;
-          case checkFilter("range:100000_250000"):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              price: { $gte: 100000, $lte: 250000 },
-            });
-            break;
-          case checkFilter("range:250000_500000"):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              price: { $gte: 250000, $lte: 500000 },
-            });
-            break;
-          case checkFilter("range:500000_800000"):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              price: { $gte: 500000, $lte: 800000 },
-            });
-            break;
-          case checkFilter("on800000"):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              price: { $gte: 800000 },
-            });
-            break;
-          case checkFilter("under100000,range:100000_250000"):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-              ],
-            });
-            break;
-          case checkFilter(
-            "under100000,range:100000_250000,range:250000_500000"
-          ):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-                { price: { $gte: 250000, $lte: 500000 } },
-              ],
-            });
-            break;
-          case checkFilter(
-            "under100000,range:100000_250000,range:250000_500000,range:500000_800000"
-          ):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-                { price: { $gte: 250000, $lte: 500000 } },
-                { price: { $gte: 500000, $lte: 800000 } },
-              ],
-            });
-            break;
-          case checkFilter(
-            "under100000,range:100000_250000,range:250000_500000,range:500000_800000,on800000"
-          ):
-            products = await Product.find({
-              category: { $in: [qCategory] },
-              $or: [
-                { price: { $lte: 100000 } },
-                { price: { $gte: 100000, $lte: 250000 } },
-                { price: { $gte: 250000, $lte: 500000 } },
-                { price: { $gte: 500000, $lte: 800000 } },
-                { price: { $gte: 800000 } },
-              ],
-            });
-            break;
-          default:
-            break;
+      if (qLte && qGte && qSize) {
+        products = await Product.find({
+          price: { $lte: qLte, $gte: qGte },
+          size: { $in: qSize },
+        });
+      }
+
+      if (qLte && qGte && qSort) {
+        products = await Product.find({
+          price: { $lte: qLte, $gte: qGte },
+        }).sort({
+          [qSort]: qValue,
+        });
+      }
+
+      if (qSize && qSort) {
+        products = await Product.find({
+          size: { $in: qSize },
+        }).sort({
+          [qSort]: qValue,
+        });
+      }
+
+      if (qLte && qGte && qSort && qSize) {
+        products = await Product.find({
+          price: { $lte: qLte, $gte: qGte },
+          size: { $in: qSize },
+        }).sort({
+          [qSort]: qValue,
+        });
+      }
+
+      // filter by category
+      if (qLte && qGte && qCategory) {
+        products = await Product.find({
+          category: { $in: [qCategory] },
+          price: { $lte: qLte, $gte: qGte },
+        });
+      }
+
+      if (qSize && qCategory) {
+        products = await Product.find({
+          size: { $in: qSize },
+        });
+      }
+
+      if (qSort && qCategory) {
+        products = await Product.find({
+          category: { $in: [qCategory] },
+        }).sort({
+          [qSort]: qValue,
+        });
+        if (qSort === "hot-product") {
+          products = await Product.find({
+            category: { $in: [qCategory] },
+          });
+          shuffleArray(products);
         }
       }
+
+      if (qLte && qGte && qSize && qCategory) {
+        products = await Product.find({
+          category: { $in: [qCategory] },
+          price: { $lte: qLte, $gte: qGte },
+          size: { $in: qSize },
+        });
+      }
+
+      if (qLte && qGte && qSort && qCategory) {
+        products = await Product.find({
+          category: { $in: [qCategory] },
+          price: { $lte: qLte, $gte: qGte },
+        }).sort({
+          [qSort]: qValue,
+        });
+      }
+
+      if (qSize && qSort && qCategory) {
+        products = await Product.find({
+          category: { $in: [qCategory] },
+          size: { $in: qSize },
+        }).sort({
+          [qSort]: qValue,
+        });
+      }
+
+      if (qLte && qGte && qSort && qSize && qCategory) {
+        products = await Product.find({
+          category: { $in: [qCategory] },
+          price: { $lte: qLte, $gte: qGte },
+          size: { $in: qSize },
+        }).sort({
+          [qSort]: qValue,
+        });
+      }
+
       return res.status(200).json(products);
     } catch (error) {
       return res.status(500).json(error);
