@@ -2,12 +2,16 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 
-// let refreshTokens = [];
 const authController = {
   // REGISTER
   registerUser: async (req, res) => {
     try {
       //   Create new user
+      const username = await User.findOne({ username: req.body.username });
+      const email = await User.findOne({ email: req.body.email });
+      if (username) return res.status(401).json({ message: "username taken" });
+      if (email) return res.status(401).json({ message: "email taken" });
+
       const newUser = await new User({
         username: req.body.username,
         email: req.body.email,
@@ -31,7 +35,7 @@ const authController = {
         admin: user.admin,
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "10s" }
     );
   },
   // GENERATE REFRESHTOKEN
@@ -49,17 +53,16 @@ const authController = {
   loginUser: async (req, res) => {
     try {
       const user = await User.findOne({ username: req.body.username });
-      if (!user) return res.status(404).json({ message: "Incorrect username" });
+      if (!user) return res.status(401).json({ message: "Incorrect username" });
 
       const hashedPassword = await CryptoJS.AES.decrypt(
         user.password,
         process.env.PASS_SEC
       );
-
       const validPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
-      if (!validPassword) {
-        return res.status(404).json({ message: "Incorrect password" });
+      if (validPassword !== req.body.password) {
+        return res.status(401).json({ message: "Wrong password" });
       }
 
       if (user && validPassword) {
@@ -72,6 +75,7 @@ const authController = {
           path: "/",
           sameSite: "strict",
         });
+
         const { password, ...others } = user._doc;
         res.status(200).json({ ...others, accessToken });
       }

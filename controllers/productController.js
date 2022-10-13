@@ -99,9 +99,18 @@ const productController = {
         }).limit(qSize);
       } else if (qCategory) {
         products = await Product.find({
-          category: {
-            $in: [qCategory],
-          },
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
         });
       } else {
         products = await Product.find();
@@ -179,20 +188,54 @@ const productController = {
       // filter by category
       if (qLte && qGte && qCategory) {
         products = await Product.find({
-          category: { $in: [qCategory] },
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
           price: { $lte: qLte, $gte: qGte },
         });
       }
 
       if (qSize && qCategory) {
         products = await Product.find({
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
           size: { $in: qSize },
         });
       }
 
       if (qSort && qCategory) {
         products = await Product.find({
-          category: { $in: [qCategory] },
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
         }).sort({
           [qSort]: qValue,
         });
@@ -206,7 +249,18 @@ const productController = {
 
       if (qLte && qGte && qSize && qCategory) {
         products = await Product.find({
-          category: { $in: [qCategory] },
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
           price: { $lte: qLte, $gte: qGte },
           size: { $in: qSize },
         });
@@ -214,7 +268,18 @@ const productController = {
 
       if (qLte && qGte && qSort && qCategory) {
         products = await Product.find({
-          category: { $in: [qCategory] },
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
           price: { $lte: qLte, $gte: qGte },
         }).sort({
           [qSort]: qValue,
@@ -223,7 +288,18 @@ const productController = {
 
       if (qSize && qSort && qCategory) {
         products = await Product.find({
-          category: { $in: [qCategory] },
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
           size: { $in: qSize },
         }).sort({
           [qSort]: qValue,
@@ -232,7 +308,18 @@ const productController = {
 
       if (qLte && qGte && qSort && qSize && qCategory) {
         products = await Product.find({
-          category: { $in: [qCategory] },
+          $or: [
+            {
+              category: {
+                $in: [qCategory],
+              },
+            },
+            {
+              subCategory: {
+                $in: [qCategory],
+              },
+            },
+          ],
           price: { $lte: qLte, $gte: qGte },
           size: { $in: qSize },
         }).sort({

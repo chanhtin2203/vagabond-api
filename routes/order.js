@@ -30,7 +30,7 @@ router.get(
   orderController.getOrder
 );
 
-// get all cart
+// get all order
 router.get(
   "/",
   middlewareController.verifyTokenAndAuthAdmin,
