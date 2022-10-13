@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGODB_URL, () => {
   console.log("Connect to mongodb");
 });
 
-app.use(cors({ origin: "http://localhost:3006", credentials: true }));
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
