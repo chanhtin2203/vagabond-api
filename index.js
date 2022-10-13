@@ -16,7 +16,30 @@ mongoose.connect(process.env.MONGODB_URL, () => {
   console.log("Connect to mongodb");
 });
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: (_, callback) => callback(null, true),
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    optionsSuccessStatus: 200,
+    // allowedHeaders: [
+    //   "Access-Control-Allow-Headers",
+    //   "Access-Control-Request-Headers",
+    //   "Access-Control-Allow-Origin",
+    //   "Access-Control-Allow-Methods",
+    //   "Origin",
+    //   "WithCredentials",
+    //   "X-Requested-With",
+    //   "Content-Type",
+    //   "Accept",
+    //   "Authorization",
+    //   "X-HTTP-Method-Override",
+    //   "Cookie",
+    //   "Set-Cookie",
+    //   "Request",
+    // ],
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 
