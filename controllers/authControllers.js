@@ -13,6 +13,7 @@ const authController = {
       if (email) return res.status(401).json({ message: "email taken" });
 
       const newUser = await new User({
+        fullname: req.body.fullname,
         username: req.body.username,
         email: req.body.email,
         password: CryptoJS.AES.encrypt(
@@ -53,7 +54,7 @@ const authController = {
   loginUser: async (req, res) => {
     try {
       const user = await User.findOne({ username: req.body.username });
-      if (!user) return res.status(401).json({ message: "Incorrect username" });
+      if (!user) return res.status(200).json({ message: "Incorrect username" });
 
       const hashedPassword = await CryptoJS.AES.decrypt(
         user.password,
@@ -62,7 +63,7 @@ const authController = {
       const validPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
       if (validPassword !== req.body.password) {
-        return res.status(401).json({ message: "Wrong password" });
+        return res.status(200).json({ message: "Wrong password" });
       }
 
       if (user && validPassword) {

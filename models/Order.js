@@ -15,12 +15,16 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           default: 1,
         },
+        size: {
+          type: String,
+        },
       },
     ],
     amount: { type: Number, required: true },
-    address: { type: Object, required: true },
+    note: { type: String },
+    address: { type: String, required: true },
     phone: { type: Number, required: true },
-    payment: { type: Boolean, required: true },
+    payment: { type: Boolean, required: true, default: false },
     status: { type: String, default: "pending" },
   },
   { timestamps: true }
