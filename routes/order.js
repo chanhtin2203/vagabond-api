@@ -33,7 +33,7 @@ router.get(
 // get all order
 router.get(
   "/",
-  middlewareController.verifyTokenAndAuthorization,
+  middlewareController.verifyTokenAndAuthAdmin,
   orderController.getAllOrder
 );
 
