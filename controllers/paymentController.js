@@ -1,6 +1,5 @@
 const OrderModel = require("../models/Order");
 const querystring = require("qs");
-const sha256 = require("sha256");
 const dateFormat = require("dateformat");
 const crypto = require("crypto");
 const expressAsyncHandler = require("express-async-handler");
@@ -59,6 +58,7 @@ const paymentController = {
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
+
     res.status(200).json({ code: "00", data: vnpUrl });
   }),
   returnPayment: expressAsyncHandler(async (req, res) => {
@@ -114,10 +114,18 @@ const paymentController = {
       var orderId = vnp_Params["vnp_TxnRef"];
       var rspCode = vnp_Params["vnp_ResponseCode"];
 
+      const date = new Date();
+      const payDate = dateFormat(date, "yyyy-mm-dd HH:mm:ss");
+
       await OrderModel.findByIdAndUpdate(
         { _id: id },
         {
-          $set: { payment: true },
+          $set: {
+            payment: true,
+            bankCode: vnp_Params.vnp_BankCode,
+            vnpCode: vnp_Params.vnp_TmnCode,
+            payDate: payDate,
+          },
         },
         { new: true }
       );

@@ -5,7 +5,7 @@ const router = require("express").Router();
 // Create
 router.post(
   "/",
-  middlewareController.verifyToken,
+  middlewareController.verifyTokenAndAuthorization,
   orderController.createNewOrder
 );
 
@@ -25,7 +25,7 @@ router.delete(
 
 // get user orders
 router.get(
-  "/find/:userId",
+  "/find/:id",
   middlewareController.verifyTokenAndAuthorization,
   orderController.getOrder
 );

@@ -24,6 +24,8 @@ const userSchema = new mongoose.Schema(
       require: true,
       minlength: 6,
     },
+    address: { type: String },
+    phone: { type: String },
     admin: {
       type: Boolean,
       default: false,

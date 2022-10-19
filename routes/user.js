@@ -10,6 +10,12 @@ router.put(
   userController.updateUsers
 );
 
+router.put(
+  "/password/:id",
+  middlewareController.verifyTokenAndAuthorization,
+  userController.changePassword
+);
+
 // Delete user
 router.delete(
   "/delete/:id",
@@ -20,7 +26,7 @@ router.delete(
 //Get user
 router.get(
   "/find/:id",
-  middlewareController.verifyTokenAndAuthAdmin,
+  middlewareController.verifyTokenAndAuthorization,
   userController.getUser
 );
 

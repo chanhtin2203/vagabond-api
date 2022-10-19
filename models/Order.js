@@ -23,8 +23,11 @@ const orderSchema = new mongoose.Schema(
     amount: { type: Number, required: true },
     note: { type: String },
     address: { type: String, required: true },
-    phone: { type: Number, required: true },
+    phone: { type: String, required: true },
     payment: { type: Boolean, required: true, default: false },
+    vnpCode: { type: String, default: "" },
+    bankCode: { type: String, default: "" },
+    payDate: { type: String, default: "" },
     status: { type: String, default: "pending" },
   },
   { timestamps: true }

@@ -21,9 +21,45 @@ const userController = {
         },
         { new: true }
       );
-      return res.status(200).json(updatedUser);
+      const { password, ...orthers } = updatedUser._doc;
+      return res.status(200).json(orthers);
     } catch (error) {
       return res.status(500).json(error);
+    }
+  },
+  changePassword: async (req, res) => {
+    try {
+      if (req.body.oldPassword) {
+        const user = await User.findOne({ _id: req.params.id });
+        const hashedPassword = await CryptoJS.AES.decrypt(
+          user.password,
+          process.env.PASS_SEC
+        );
+        const validPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+
+        if (validPassword !== req.body.oldPassword) {
+          return res.status(200).json({ message: "Wrong password" });
+        }
+
+        req.body.password = CryptoJS.AES.encrypt(
+          req.body.password,
+          process.env.PASS_SEC
+        ).toString();
+
+        if (user && validPassword) {
+          const newPassword = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+              $set: req.body,
+            },
+            { new: true }
+          );
+          const { password, ...orthers } = newPassword._doc;
+          res.status(200).json(orthers);
+        }
+      }
+    } catch (error) {
+      res.status(500).json(error);
     }
   },
   // Delete

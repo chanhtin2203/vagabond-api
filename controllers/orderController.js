@@ -1,9 +1,12 @@
 const Order = require("../models/Order");
+const dateFormat = require("dateformat");
 
 const orderController = {
   // Create new product
   createNewOrder: async (req, res) => {
-    const newOrder = new Order(req.body);
+    const date = new Date();
+    const payDate = dateFormat(date, "yyyy-mm-dd HH:mm:ss");
+    const newOrder = new Order({ ...req.body, payDate: payDate });
     try {
       const savedOrder = await newOrder.save();
       return res.status(200).json(savedOrder);
@@ -38,7 +41,7 @@ const orderController = {
   // Get User Orders
   getOrder: async (req, res) => {
     try {
-      const orders = await Order.find({ userId: req.params.userId });
+      const orders = await Order.find({ userId: req.params.id });
       return res.status(200).json(orders);
     } catch (error) {
       return res.status(500).json(error);
