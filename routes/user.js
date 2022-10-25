@@ -7,7 +7,13 @@ const router = require("express").Router();
 router.put(
   "/edit/:id",
   middlewareController.verifyTokenAndAuthorization,
-  userController.updateUsers
+  userController.updateByUsers
+);
+
+router.put(
+  "/update/:id",
+  middlewareController.verifyTokenAndAuthAdmin,
+  userController.updateUsersByAdmin
 );
 
 router.put(

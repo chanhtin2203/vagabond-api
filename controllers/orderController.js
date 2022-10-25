@@ -63,7 +63,6 @@ const orderController = {
     const previousMonth = new Date(
       new Date().setMonth(lastMonth.getMonth() - 1)
     );
-
     try {
       const income = await Order.aggregate([
         { $match: { createdAt: { $gte: previousMonth } } },

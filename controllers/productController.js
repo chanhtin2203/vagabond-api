@@ -80,11 +80,25 @@ const productController = {
     const qSize = req.query.size;
     const qCategory = req.query.category;
     const qRandom = req.query.random;
-    const qSearch = req.query.search;
+    const qSearch = req.query.search || "";
+    const qPageIndex = parseInt(req.query.pageIndex);
+    const qPageSize = req.query.pageSize;
 
     try {
       let products;
-      if (qSearch) {
+
+      if (qPageSize && qPageIndex) {
+        const total = await Product.countDocuments({
+          title: { $regex: qSearch, $options: "i" },
+        });
+        products = await Product.find({
+          title: { $regex: qSearch, $options: "i" },
+        })
+          .skip((qPageIndex - 1) * qPageSize)
+          .limit(qPageSize);
+
+        return res.status(200).json({ products, total });
+      } else if (qSearch) {
         products = await Product.find({
           $text: { $search: `\"${qSearch}\"` },
         });

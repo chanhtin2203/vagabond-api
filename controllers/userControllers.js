@@ -1,12 +1,34 @@
 const User = require("../models/User");
+const Order = require("../models/Order");
 const CryptoJS = require("crypto-js");
 
 const userController = {
   // Update
-  updateUsers: async (req, res) => {
+  updateByUsers: async (req, res) => {
     if (req.body.admin) {
       return res.status(403).json("You're not change role admin");
     }
+    if (req.body.password) {
+      req.body.password = CryptoJS.AES.encrypt(
+        req.body.password,
+        process.env.PASS_SEC
+      ).toString();
+    }
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: req.body,
+        },
+        { new: true }
+      );
+      const { password, ...orthers } = updatedUser._doc;
+      return res.status(200).json(orthers);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  updateUsersByAdmin: async (req, res) => {
     if (req.body.password) {
       req.body.password = CryptoJS.AES.encrypt(
         req.body.password,
@@ -65,8 +87,8 @@ const userController = {
   // Delete
   deleteUser: async (req, res) => {
     try {
-      await User.findByIdAndRemove(req.params.id);
-      return res.status(200).json("User has been deleted");
+      const userDelete = await User.findByIdAndRemove(req.params.id);
+      return res.status(200).json(userDelete);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -84,14 +106,24 @@ const userController = {
   // Get all users
   getAllUser: async (req, res) => {
     const query = req.query.new;
+    const qSearch = req.query.search;
+
     try {
-      const users = query
-        ? await User.find()
-            .sort({
-              _id: -1,
-            })
-            .limit(5)
-        : await User.find();
+      let users;
+      if (qSearch !== undefined) {
+        users = await User.find({
+          $text: { $search: `\"${qSearch}\"` },
+        });
+      } else if (query) {
+        users = await User.find()
+          .sort({
+            _id: -1,
+          })
+          .limit(5);
+      } else {
+        users = await User.find();
+      }
+
       return res.status(200).json(users);
     } catch (error) {
       return res.status(500).json(error);
