@@ -33,22 +33,28 @@ const productController = {
     try {
       let products = await Product.findById(req.params.id);
 
-      await cloudinary.uploader.destroy(products.cloudinary_id);
+      if (products.image === req.body.image) {
+        products = await Product.findByIdAndUpdate(req.params.id, req.body, {
+          new: true,
+        });
+      } else {
+        await cloudinary.uploader.destroy(products.cloudinary_id);
 
-      const result = await cloudinary.uploader.upload(req.body.image, {
-        folder: "vagabond-img",
-        use_filename: true,
-      });
+        const result = await cloudinary.uploader.upload(req.body.image, {
+          folder: "vagabond-img",
+          use_filename: true,
+        });
 
-      const data = {
-        ...req.body,
-        image: result.secure_url || products.image,
-        cloudinary_id: result.public_id || products.cloudinary_id,
-      };
+        const data = {
+          ...req.body,
+          image: result.secure_url || products.image,
+          cloudinary_id: result.public_id || products.cloudinary_id,
+        };
 
-      products = await Product.findByIdAndUpdate(req.params.id, data, {
-        new: true,
-      });
+        products = await Product.findByIdAndUpdate(req.params.id, data, {
+          new: true,
+        });
+      }
 
       return res.status(200).json(products);
     } catch (error) {
