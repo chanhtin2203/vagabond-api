@@ -23,9 +23,9 @@ const authController = {
       });
       //   Save to db
       const user = await newUser.save();
-      res.status(200).json(user);
+      return res.status(200).json(user);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   },
   // GENERATE ACESSTOKEN
@@ -78,10 +78,10 @@ const authController = {
         });
 
         const { password, ...others } = user._doc;
-        res.status(200).json({ ...others, accessToken });
+        return res.status(200).json({ ...others, accessToken });
       }
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json(error);
     }
   },
   // refresh token
@@ -103,7 +103,7 @@ const authController = {
         path: "/",
         sameSite: "strict",
       });
-      res.status(200).json({
+      return res.status(200).json({
         accessToken: newAccessToken,
       });
     });
@@ -113,7 +113,7 @@ const authController = {
   userLogout: async (req, res) => {
     //Clear cookies when user logs out
     res.clearCookie("refreshToken");
-    res.status(200).json("Logged out successfully!");
+    return res.status(200).json("Logged out successfully!");
   },
 };
 

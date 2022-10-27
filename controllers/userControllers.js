@@ -110,7 +110,7 @@ const userController = {
 
     try {
       let users;
-      if (qSearch !== undefined) {
+      if (qSearch) {
         users = await User.find({
           $text: { $search: `\"${qSearch}\"` },
         });

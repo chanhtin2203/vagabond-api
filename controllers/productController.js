@@ -88,16 +88,57 @@ const productController = {
       let products;
 
       if (qPageSize && qPageIndex) {
-        const total = await Product.countDocuments({
-          title: { $regex: qSearch, $options: "i" },
-        });
-        products = await Product.find({
-          title: { $regex: qSearch, $options: "i" },
-        })
-          .skip((qPageIndex - 1) * qPageSize)
-          .limit(qPageSize);
-
-        return res.status(200).json({ products, total });
+        const subCategory = await Product.distinct("subCategory");
+        const category = await Product.distinct("category");
+        if (qCategory !== "Tất cả") {
+          const total = await Product.countDocuments({
+            $or: [
+              { $text: { $search: `\"${qSearch}\"` } },
+              { title: { $regex: qSearch, $options: "i" } },
+            ],
+            subCategory: {
+              $in: [qCategory],
+            },
+          });
+          products = await Product.find({
+            $or: [
+              { $text: { $search: `\"${qSearch}\"` } },
+              { title: { $regex: qSearch, $options: "i" } },
+            ],
+            subCategory: {
+              $in: [qCategory],
+            },
+          })
+            .skip((qPageIndex - 1) * qPageSize)
+            .limit(qPageSize);
+          return res.status(200).json({
+            products,
+            total,
+            subCategory: ["Tất cả", ...subCategory],
+            category,
+          });
+        } else {
+          const total = await Product.countDocuments({
+            $or: [
+              { $text: { $search: `\"${qSearch}\"` } },
+              { title: { $regex: qSearch, $options: "i" } },
+            ],
+          });
+          products = await Product.find({
+            $or: [
+              { $text: { $search: `\"${qSearch}\"` } },
+              { title: { $regex: qSearch, $options: "i" } },
+            ],
+          })
+            .skip((qPageIndex - 1) * qPageSize)
+            .limit(qPageSize);
+          return res.status(200).json({
+            products,
+            total,
+            subCategory: ["Tất cả", ...subCategory],
+            category,
+          });
+        }
       } else if (qSearch) {
         products = await Product.find({
           $text: { $search: `\"${qSearch}\"` },
