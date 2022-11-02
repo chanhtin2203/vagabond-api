@@ -37,6 +37,13 @@ router.get(
   orderController.getAllOrder
 );
 
+// get detail order
+router.get(
+  "/detail/:id",
+  middlewareController.verifyTokenAndAuthAdmin,
+  orderController.getDetailOrders
+);
+
 // Get Monthly income
 router.get(
   "/income",

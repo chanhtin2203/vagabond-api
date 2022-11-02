@@ -47,10 +47,34 @@ const orderController = {
       return res.status(500).json(error);
     }
   },
+  getDetailOrders: async (req, res) => {
+    try {
+      const orders = await Order.findOne({ _id: req.params.id });
+      return res.status(200).json(orders);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
   // Get all Cart
   getAllOrder: async (req, res) => {
+    const key = req.query.key;
     try {
-      const orders = await Order.find();
+      let orders;
+      switch (key) {
+        case "pending":
+        case "reject":
+        case "success":
+          orders = await Order.find({ status: key }).sort({
+            _id: -1,
+          });
+          break;
+        default:
+          orders = await Order.find().sort({
+            _id: -1,
+          });
+          break;
+      }
+
       return res.status(200).json(orders);
     } catch (error) {
       return res.status(500).json(error);
