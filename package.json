@@ -27,6 +27,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "qs": "^6.7.0",
     "sha256": "^0.2.0",
+    "socket.io": "^4.5.3",
     "stripe": "^10.10.0"
   },
   "devDependencies": {

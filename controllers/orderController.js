@@ -32,8 +32,8 @@ const orderController = {
   // Delete
   deleteOrder: async (req, res) => {
     try {
-      await Order.findByIdAndRemove(req.params.id);
-      return res.status(200).json("Order has been deleted");
+      const Orders = await Order.findByIdAndRemove(req.params.id);
+      return res.status(200).json(Orders);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -41,7 +41,9 @@ const orderController = {
   // Get User Orders
   getOrder: async (req, res) => {
     try {
-      const orders = await Order.find({ userId: req.params.id });
+      const orders = await Order.find({ userId: req.params.id }).sort({
+        _id: -1,
+      });
       return res.status(200).json(orders);
     } catch (error) {
       return res.status(500).json(error);
@@ -57,22 +59,33 @@ const orderController = {
   },
   // Get all Cart
   getAllOrder: async (req, res) => {
-    const key = req.query.key;
+    const qKey = req.query.key;
+    const qSearch = req.query.search || "";
     try {
       let orders;
-      switch (key) {
-        case "pending":
-        case "reject":
-        case "success":
-          orders = await Order.find({ status: key }).sort({
-            _id: -1,
-          });
-          break;
-        default:
-          orders = await Order.find().sort({
-            _id: -1,
-          });
-          break;
+      if (qKey === "all") {
+        orders = await Order.find().sort({
+          _id: -1,
+        });
+      } else {
+        orders = await Order.find({ status: qKey }).sort({
+          _id: -1,
+        });
+      }
+
+      if (qSearch !== "" && qKey !== "all") {
+        orders = await Order.find({
+          status: qKey,
+          fullname: { $regex: qSearch, $options: "i" },
+        }).sort({
+          _id: -1,
+        });
+      } else if (qSearch !== "" && qKey === "all") {
+        orders = await Order.find({
+          fullname: { $regex: qSearch, $options: "i" },
+        }).sort({
+          _id: -1,
+        });
       }
 
       return res.status(200).json(orders);

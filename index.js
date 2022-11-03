@@ -47,6 +47,18 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json());
 
+// socket.io
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+
+io.on("connection", (socket) => {
+  console.log(socket.id, "connected");
+
+  socket.on("disconnect", () => {
+    console.log(socket.id, "disconnect");
+  });
+});
+
 // ROUTES
 app.use("/v1/auth", authRoute);
 app.use("/v1/user", userRoute);
@@ -56,6 +68,6 @@ app.use("/v1/orders", orderRoute);
 app.use("/v1/payment", paymentRoute);
 app.use("/v1/checkout", stripeRoute);
 
-app.listen(8000, () => {
-  console.log("server is running");
+http.listen(8000, () => {
+  console.log("server is running " + 8000);
 });
