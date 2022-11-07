@@ -1,5 +1,7 @@
 const middlewareController = require("../controllers/middlewareController");
-const commentController = require("../controllers/commentController");
+const commentControllers = require("../controllers/commentController");
 const router = require("express").Router();
 
+router.get("/comments/:id", commentControllers.getComments);
 
+module.exports = router;

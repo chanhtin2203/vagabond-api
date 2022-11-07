@@ -12,11 +12,9 @@ const commentSchema = new mongoose.Schema(
     product_id: {
       type: String,
     },
-    reply: {
-      type: Array,
-    },
+    reply: Array,
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Cart", commentSchema);
+module.exports = mongoose.model("Comments", commentSchema);
