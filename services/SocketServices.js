@@ -79,7 +79,7 @@ const SocketServices = {
     socket.on("create_conversation", (currentUser) => {
       const conversation = new Conversation({
         idUser: currentUser._id,
-        nameConversation: currentUser.name,
+        nameConversation: currentUser.fullname,
       });
 
       conversation.save().then((data) => {
@@ -91,7 +91,6 @@ const SocketServices = {
     // chat
     socket.on("chat", async (data) => {
       const { _id, sender, message, idConversation } = data;
-      
 
       const conversation = await Conversation.updateOne(
         {
