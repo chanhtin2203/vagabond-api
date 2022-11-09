@@ -16,8 +16,8 @@ const chatRoute = require("./routes/chat");
 const SocketServices = require("./services/SocketServices");
 
 const app = express();
-const https = require("https").Server(app);
-const io = require("socket.io")(https);
+const http = require("https").createServer(app);
+const io = require("socket.io")(http);
 dotenv.config();
 mongoose.connect(process.env.MONGODB_URL, () => {
   console.log("Connect to mongodb");
@@ -68,6 +68,6 @@ app.use("/v1/checkout", stripeRoute);
 
 const PORT = process.env.PORT || 8001;
 
-https.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log("server is running " + PORT);
 });
