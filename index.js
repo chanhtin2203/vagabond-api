@@ -67,6 +67,8 @@ app.use("/v1/chat", chatRoute);
 app.use("/v1/payment", paymentRoute);
 app.use("/v1/checkout", stripeRoute);
 
-http.listen(8001, () => {
-  console.log("server is running " + 8001);
+const PORT = process.env.PORT || 8001;
+
+http.listen(PORT, () => {
+  console.log("server is running " + PORT);
 });
