@@ -16,7 +16,7 @@ const chatRoute = require("./routes/chat");
 const SocketServices = require("./services/SocketServices");
 
 const app = express();
-const http = require("https").createServer(app);
+const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 dotenv.config();
 mongoose.connect(process.env.MONGODB_URL, () => {
