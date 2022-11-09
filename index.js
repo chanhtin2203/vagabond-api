@@ -12,6 +12,7 @@ const orderRoute = require("./routes/order");
 const commentsRoute = require("./routes/comments");
 const paymentRoute = require("./routes/payment");
 const stripeRoute = require("./routes/stripe");
+const chatRoute = require("./routes/chat");
 const SocketServices = require("./services/SocketServices");
 
 const app = express();
@@ -61,9 +62,10 @@ app.use("/v1/products", productRoute);
 app.use("/v1/carts", cartRoute);
 app.use("/v1/orders", orderRoute);
 app.use("/v1", commentsRoute);
+app.use("/v1/chat", chatRoute);
 app.use("/v1/payment", paymentRoute);
 app.use("/v1/checkout", stripeRoute);
 
-http.listen(8000, () => {
-  console.log("server is running " + 8000);
+http.listen(8001, () => {
+  console.log("server is running " + 8001);
 });
