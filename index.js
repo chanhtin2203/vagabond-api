@@ -26,7 +26,7 @@ mongoose.connect(process.env.MONGODB_URL, () => {
 app.use(
   cors({
     credentials: true,
-    origin: "https://vagabond-kappa.vercel.app/",
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     optionsSuccessStatus: 200,
     // allowedHeaders: [
