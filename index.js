@@ -17,7 +17,11 @@ const SocketServices = require("./services/SocketServices");
 
 const app = express();
 const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "*",
+  },
+});
 dotenv.config();
 mongoose.connect(process.env.MONGODB_URL, () => {
   console.log("Connect to mongodb");
