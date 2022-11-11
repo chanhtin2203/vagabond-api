@@ -16,37 +16,38 @@ const chatRoute = require("./routes/chat");
 const SocketServices = require("./services/SocketServices");
 
 const app = express();
-const http = require("https").createServer(app);
+const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 dotenv.config();
 mongoose.connect(process.env.MONGODB_URL, () => {
   console.log("Connect to mongodb");
 });
 
-app.use(
-  cors({
-    origin: "https://vagabond-kappa.vercel.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    optionsSuccessStatus: 200,
-    allowedHeaders: [
-    //   "Access-Control-Allow-Headers",
-    //   "Access-Control-Request-Headers",
-      "Access-Control-Allow-Origin"= "*",
-    //   "Access-Control-Allow-Methods",
-    //   "Origin",
-    //   "WithCredentials",
-    //   "X-Requested-With",
-    //   "Content-Type",
-    //   "Accept",
-    //   "Authorization",
-    //   "X-HTTP-Method-Override",
-    //   "Cookie",
-    //   "Set-Cookie",
-    //   "Request",
-    ],
-  })
-);
+// app.use(
+//   cors({
+//     origin: "https://vagabond-kappa.vercel.app",
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     optionsSuccessStatus: 200,
+//     // allowedHeaders: [
+//     //   "Access-Control-Allow-Headers",
+//     //   "Access-Control-Request-Headers",
+//     // "Access-Control-Allow-Origin",
+//     //   "Access-Control-Allow-Methods",
+//     //   "Origin",
+//     //   "WithCredentials",
+//     //   "X-Requested-With",
+//     //   "Content-Type",
+//     //   "Accept",
+//     //   "Authorization",
+//     //   "X-HTTP-Method-Override",
+//     //   "Cookie",
+//     //   "Set-Cookie",
+//     //   "Request",
+//     // ],
+//   })
+// );
+app.use(cors());
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
