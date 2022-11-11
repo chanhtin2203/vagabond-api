@@ -29,10 +29,10 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     optionsSuccessStatus: 200,
-    // allowedHeaders: [
+    allowedHeaders: [
     //   "Access-Control-Allow-Headers",
     //   "Access-Control-Request-Headers",
-    //   "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Origin"= "*",
     //   "Access-Control-Allow-Methods",
     //   "Origin",
     //   "WithCredentials",
@@ -44,7 +44,7 @@ app.use(
     //   "Cookie",
     //   "Set-Cookie",
     //   "Request",
-    // ],
+    ],
   })
 );
 app.use(cookieParser());
