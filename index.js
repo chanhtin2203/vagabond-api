@@ -47,7 +47,9 @@ mongoose.connect(process.env.MONGODB_URL, () => {
 //     // ],
 //   })
 // );
-app.use(cors());
+app.use(
+  cors({ origin: "https://vagabond-kappa.vercel.app", credentials: true })
+);
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
