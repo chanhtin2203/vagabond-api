@@ -29,7 +29,6 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     optionsSuccessStatus: 200,
-    exposedHeaders: ["set-cookie"],
     // allowedHeaders: [
     //   "Access-Control-Allow-Headers",
     //   "Access-Control-Request-Headers",
