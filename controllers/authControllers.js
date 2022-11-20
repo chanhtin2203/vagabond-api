@@ -71,6 +71,7 @@ const authController = {
         const refreshTokenUser = authController.generateRefreshToken(user);
 
         res.cookie("refreshToken", refreshTokenUser, {
+          maxAge: 900000,
           httpOnly: true,
           secure: false,
           path: "/",
@@ -98,6 +99,7 @@ const authController = {
       const newAccessToken = authController.generateAccessToken(user);
       const newRefreshToken = authController.generateRefreshToken(user);
       res.cookie("refreshToken", newRefreshToken, {
+        maxAge: 900000,
         httpOnly: true,
         secure: false,
         path: "/",
