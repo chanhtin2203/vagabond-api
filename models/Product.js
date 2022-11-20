@@ -20,14 +20,13 @@ const productSchema = new mongoose.Schema(
     },
     category: {
       type: String,
+      require: true,
     },
     subCategory: {
       type: String,
+      require: true,
     },
     size: {
-      type: Array,
-    },
-    color: {
       type: Array,
     },
     price: {

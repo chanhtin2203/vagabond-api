@@ -24,7 +24,7 @@ const paymentController = {
     order.save();
 
     let vnpUrl = url;
-    const date = new Date();
+    const date = Date.now();
 
     const createDate = dateFormat(date, "yyyymmddHHmmss");
     const orderId = order._id.toString();
@@ -47,7 +47,7 @@ const paymentController = {
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddr;
     vnp_Params["vnp_CreateDate"] = createDate;
-    vnp_Params["vnp_BankCode"] = "NCB";
+    // vnp_Params["vnp_BankCode"] = "NCB";
 
     vnp_Params = sortObject(vnp_Params);
 
@@ -57,7 +57,6 @@ const paymentController = {
     var signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-
 
     res.status(200).json({ code: "00", data: vnpUrl });
   }),
@@ -114,8 +113,8 @@ const paymentController = {
       var orderId = vnp_Params["vnp_TxnRef"];
       var rspCode = vnp_Params["vnp_ResponseCode"];
 
-      const date = new Date();
-      const payDate = dateFormat(date, "yyyy-mm-dd HH:mm:ss");
+      const date = Date.now();
+      const payDate = dateFormat(date, "yyyy-mm-dd HH:MM:ss");
 
       await OrderModel.findByIdAndUpdate(
         { _id: id },

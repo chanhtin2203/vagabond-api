@@ -4,8 +4,8 @@ const dateFormat = require("dateformat");
 const orderController = {
   // Create new product
   createNewOrder: async (req, res) => {
-    const date = new Date();
-    const payDate = dateFormat(date, "yyyy-mm-dd HH:mm:ss");
+    const date = Date.now();
+    const payDate = dateFormat(date, "yyyy-mm-dd HH:MM:ss");
     const newOrder = new Order({ ...req.body, payDate: payDate });
     try {
       const savedOrder = await newOrder.save();
@@ -76,13 +76,13 @@ const orderController = {
       if (qSearch !== "" && qKey !== "all") {
         orders = await Order.find({
           status: qKey,
-          fullname: { $regex: qSearch, $options: "i" },
+          $or: [{ fullname: { $regex: qSearch, $options: "i" } }],
         }).sort({
           _id: -1,
         });
       } else if (qSearch !== "" && qKey === "all") {
         orders = await Order.find({
-          fullname: { $regex: qSearch, $options: "i" },
+          $or: [{ fullname: { $regex: qSearch, $options: "i" } }],
         }).sort({
           _id: -1,
         });
